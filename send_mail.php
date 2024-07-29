@@ -1,21 +1,25 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = $_POST['fullname'];
-    $email = $_POST['email'];
-    $message = $_POST['message'];
+    $name = htmlspecialchars($_POST['name']);
+    $email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+    $message = htmlspecialchars($_POST['message']);
 
-    $to = "aaquibbadarpura780@example.com"; // Replace with your email address
-    $subject = "New Contact Form Submission";
-    $body = "Name: $name\nEmail: $email\n\nMessage:\n$message";
+    if ($email) {
+        $to = "aaquibbadarpura780@email.com";
+        $subject = "New Contact Form Submission";
+        $body = "Name: $name\nEmail: $email\n\nMessage:\n$message";
+        $headers = "From: $email";
 
-    $headers = "From: $email";
-
-    if (mail($to, $subject, $body, $headers)) {
-        echo "Message successfully sent!";
+        if (mail($to, $subject, $body, $headers)) {
+            echo "Email successfully sent";
+        } else {
+            echo "Email sending failed";
+        }
     } else {
-        echo "Message delivery failed...";
+        echo "Invalid email address";
     }
 } else {
-    echo "Invalid request method.";
+    echo "405 Method Not Allowed";
 }
 ?>
+
